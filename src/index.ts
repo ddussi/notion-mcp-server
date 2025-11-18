@@ -14,7 +14,7 @@ dotenv.config();
 
 // Validate required environment variables
 if (!process.env.NOTION_API_KEY) {
-  console.error("❌ Error: NOTION_API_KEY is required in .env file");
+  console.error("Error: NOTION_API_KEY is required in .env file");
   console.error("Get your API key from: https://www.notion.so/my-integrations");
   process.exit(1);
 }
@@ -48,7 +48,9 @@ function loadUsers(): { [apiKey: string]: UserPermissions } {
   const usersFile = path.join(__dirname, "..", "users.json");
 
   if (!fs.existsSync(usersFile)) {
-    console.warn("⚠️  users.json not found. Run 'npm run manage-users add <name>' to add users.");
+    console.warn(
+      "Warning: users.json not found. Run 'npm run manage-users add <name>' to add users."
+    );
     return {};
   }
 
@@ -362,7 +364,7 @@ app.post("/mcp/messages", authenticate, async (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Notion MCP Server running on http://localhost:${PORT}`);
-  console.log(`📡 MCP endpoint: http://localhost:${PORT}/mcp/sse`);
-  console.log(`💡 Health check: http://localhost:${PORT}/health`);
+  console.log(`Notion MCP Server running on http://localhost:${PORT}`);
+  console.log(`MCP endpoint: http://localhost:${PORT}/mcp/sse`);
+  console.log(`Health check: http://localhost:${PORT}/health`);
 });

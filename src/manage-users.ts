@@ -61,11 +61,11 @@ function addUser(name: string) {
   users.push(newUser);
   saveUsers(users);
 
-  console.log("\n✅ User created successfully!\n");
+  console.log("\nUser created successfully!\n");
   console.log(`Name: ${name}`);
   console.log(`API Key: ${apiKey}`);
   console.log(`Permissions: Full access (no restrictions)`);
-  console.log("\n⚠️  Save this API key securely. It won't be shown again.\n");
+  console.log("\nSave this API key securely. It won't be shown again.\n");
 }
 
 function listUsers() {
@@ -76,7 +76,7 @@ function listUsers() {
     return;
   }
 
-  console.log("\n📋 Registered Users:\n");
+  console.log("\nRegistered Users:\n");
   users.forEach((user, index) => {
     console.log(`${index + 1}. ${user.name}`);
     console.log(`   API Key: ${user.apiKey}`);
@@ -103,12 +103,12 @@ function removeUser(apiKey: string) {
   const filteredUsers = users.filter((u) => u.apiKey !== apiKey);
 
   if (filteredUsers.length === users.length) {
-    console.log("\n❌ User not found.\n");
+    console.log("\nUser not found.\n");
     return;
   }
 
   saveUsers(filteredUsers);
-  console.log("\n✅ User removed successfully.\n");
+  console.log("\nUser removed successfully.\n");
 }
 
 function setPermissions(apiKey: string, type: "database" | "page", ids: string[]) {
@@ -116,7 +116,7 @@ function setPermissions(apiKey: string, type: "database" | "page", ids: string[]
   const user = users.find((u) => u.apiKey === apiKey);
 
   if (!user) {
-    console.log("\n❌ User not found.\n");
+    console.log("\nUser not found.\n");
     return;
   }
 
@@ -127,7 +127,7 @@ function setPermissions(apiKey: string, type: "database" | "page", ids: string[]
   }
 
   saveUsers(users);
-  console.log("\n✅ Permissions updated successfully.\n");
+  console.log("\nPermissions updated successfully.\n");
 }
 
 // CLI
@@ -173,7 +173,7 @@ switch (command) {
     break;
 
   default:
-    console.log("\n📖 User Management Utility\n");
+    console.log("\nUser Management Utility\n");
     console.log("Available commands:");
     console.log("  add <name>                                    - Add a new user");
     console.log("  list                                          - List all users");

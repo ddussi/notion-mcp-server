@@ -1,14 +1,64 @@
-# Notion MCP Server
+# Notion MCP Server (Self-Hosted)
 
-노션 워크스페이스와 연동되는 **원격 MCP(Model Context Protocol) 서버**입니다.
+Self-hosted Notion MCP 서버 - 폐쇄망 환경 및 엔터프라이즈용
+
+> **주의: 대부분의 사용자에게는 [공식 Notion MCP](https://mcp.notion.com)를 권장합니다.**
+
+## 공식 vs Self-Hosted
+
+### 대부분의 경우: [공식 Notion MCP](https://mcp.notion.com) 사용 권장
+
+**장점:**
+
+- Notion이 직접 호스팅 및 관리
+- OAuth 인증으로 각자 자기 권한으로 안전하게 접근
+- 서버 관리 불필요, 무료
+- 자동 업데이트 및 최신 기능 지원
+
+**사용법:**
+
+```json
+{
+  "mcpServers": {
+    "Notion": {
+      "url": "https://mcp.notion.com/mcp"
+    }
+  }
+}
+```
+
+### 이 프로젝트가 필요한 경우 (10%)
+
+다음과 같은 **특수한 상황**에서만 Self-Hosted 서버가 필요합니다:
+
+1. **폐쇄망/내부망 환경**
+
+   - 외부 서버(mcp.notion.com) 접근 불가
+   - VPN/내부망에서만 운영
+
+2. **중앙 집중식 권한 관리**
+
+   - 관리자가 직접 사용자별 권한 세밀 제어
+   - 팀원 퇴사 시 즉시 권한 차단
+
+3. **감사 로그 필요**
+
+   - 컴플라이언스를 위한 접근 기록
+   - 누가 언제 무엇을 조회했는지 추적
+
+4. **커스텀 로직 추가**
+   - 민감 정보 자동 필터링
+   - 회사 특화 비즈니스 규칙
+
+---
 
 ## 특징
 
-- ✅ **원격 서버**: 중앙 서버에서 실행, 사용자들은 URL만 설정
-- ✅ **API 키 인증**: 사용자별 API 키로 인증
-- ✅ **권한 관리**: 사용자별 노션 페이지/DB 접근 제어
-- ✅ **Read-only**: 안전한 조회 전용 (생성/수정 없음)
-- ✅ **다중 클라이언트 지원**: Claude Code, Cursor, VSCode 등
+- **Self-Hosted**: 자체 서버에서 실행
+- **API 키 인증**: 사용자별 API 키로 인증
+- **세밀한 권한 관리**: 사용자별 노션 페이지/DB 접근 제어
+- **보안 기능**: Rate limiting, CORS, 환경 변수 검증
+- **Read-only**: 안전한 조회 전용 (생성/수정 없음)
 
 ## 제공 기능 (도구)
 
@@ -21,15 +71,23 @@
 ```
 사용자 (Claude Code/Cursor/VSCode)
     ↓ (HTTP + SSE)
-MCP 서버
+Self-Hosted MCP 서버
     ├── API 키 인증
+    ├── Rate Limiting
     ├── 권한 검증
     └── Notion API 호출
 ```
 
+**기술 스택:**
+
+- Node.js + TypeScript
+- Express.js (HTTP 서버)
+- MCP SDK (Server-Sent Events)
+- Notion SDK
+
 ---
 
-## 🚀 서버 설정 (관리자용)
+## 서버 설정 (관리자용)
 
 ### 1. 노션 API 키 발급
 
@@ -37,9 +95,9 @@ MCP 서버
 2. "New integration" 클릭
 3. Integration 이름 입력 (예: "My MCP Server")
 4. Capabilities 선택:
-   - ✅ Read content
-   - ❌ Update content (사용 안 함)
-   - ❌ Insert content (사용 안 함)
+   - Read content (체크)
+   - Update content (사용 안 함)
+   - Insert content (사용 안 함)
 5. API 키 복사
 
 ### 2. 노션 페이지 연결
@@ -102,13 +160,13 @@ npm run manage-users add "홍길동"
 출력:
 
 ```
-✅ User created successfully!
+User created successfully!
 
 Name: 홍길동
 API Key: mcp_a1b2c3d4...
 Permissions: Full access (no restrictions)
 
-⚠️  Save this API key securely. It won't be shown again.
+Save this API key securely. It won't be shown again.
 ```
 
 #### 사용자 목록 조회
@@ -137,7 +195,7 @@ npm run manage-users remove mcp_a1b2c3d4...
 
 ---
 
-## 👥 클라이언트 설정 (사용자용)
+## 클라이언트 설정 (사용자용)
 
 ### Claude Code
 
@@ -208,7 +266,7 @@ npm run manage-users remove mcp_a1b2c3d4...
 
 ---
 
-## 📖 사용 예시
+## 사용 예시
 
 Claude Code나 Cursor에서:
 
@@ -226,20 +284,20 @@ Claude Code나 Cursor에서:
 
 ---
 
-## 🔒 보안
+## 보안
 
 ### 기본 보안 기능
 
-- ✅ **환경 변수 검증**: `NOTION_API_KEY` 누락 시 서버 시작 불가
-- ✅ **Rate Limiting**: IP당 15분에 100 요청으로 제한 (DDoS 방지)
-- ✅ **CORS 설정**: 프로덕션에서 허용된 origin만 접근 가능 (`.env`에 `ALLOWED_ORIGINS` 설정)
-- ✅ **API 키 인증**: 모든 MCP 요청에 `x-api-key` 헤더 필수
+- **환경 변수 검증**: `NOTION_API_KEY` 누락 시 서버 시작 불가
+- **Rate Limiting**: IP당 15분에 100 요청으로 제한 (DDoS 방지)
+- **CORS 설정**: 프로덕션에서 허용된 origin만 접근 가능 (`.env`에 `ALLOWED_ORIGINS` 설정)
+- **API 키 인증**: 모든 MCP 요청에 `x-api-key` 헤더 필수
 
 ### API 키 관리
 
-- ✅ API 키는 `users.json`에 저장됨 (절대 커밋하지 말 것!)
-- ✅ `.gitignore`에 `users.json` 포함됨
-- ✅ HTTPS 사용 권장 (프로덕션 환경)
+- API 키는 `users.json`에 저장됨 (절대 커밋하지 말 것!)
+- `.gitignore`에 `users.json` 포함됨
+- HTTPS 사용 권장 (프로덕션 환경)
 
 ### 권한 제어
 
@@ -265,7 +323,7 @@ Claude Code나 Cursor에서:
 
 ---
 
-## 🛠 개발
+## 개발
 
 ### 디렉토리 구조
 
@@ -298,7 +356,7 @@ curl http://localhost:3000/health
 
 ---
 
-## 📝 TODO
+## TODO
 
 - [ ] HTTPS 지원
 - [x] Rate limiting

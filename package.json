@@ -1,9 +1,13 @@
 {
   "name": "notion-mcp-server",
   "version": "1.0.0",
-  "description": "Remote MCP server with Notion integration",
+  "description": "Self-hosted MCP server for Notion - Special use cases (air-gapped, centralized control, audit logs)",
   "type": "module",
   "main": "build/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/notion-mcp-server"
+  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
