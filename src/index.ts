@@ -101,7 +101,7 @@ function hasPermission(
 function createMCPServer() {
   const server = new Server(
     {
-      name: "company-mcp-server",
+      name: "notion-mcp-server",
       version: "1.0.0",
     },
     {
@@ -296,7 +296,7 @@ app.use(express.json());
 
 // Health check endpoint
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", message: "Company MCP Server is running" });
+  res.json({ status: "ok", message: "Notion MCP Server is running" });
 });
 
 // SSE endpoint (GET) - Client opens connection
@@ -341,7 +341,7 @@ app.post("/mcp/messages", authenticate, async (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Company MCP Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Notion MCP Server running on http://localhost:${PORT}`);
   console.log(`📡 MCP endpoint: http://localhost:${PORT}/mcp/sse`);
   console.log(`💡 Health check: http://localhost:${PORT}/health`);
 });

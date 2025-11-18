@@ -1,7 +1,7 @@
 {
-  "name": "company-mcp-server",
+  "name": "notion-mcp-server",
   "version": "1.0.0",
-  "description": "Company MCP server with Notion integration",
+  "description": "Remote MCP server with Notion integration",
   "type": "module",
   "main": "build/index.js",
   "scripts": {
@@ -11,7 +11,11 @@
     "dev": "npm run build && npm start",
     "manage-users": "npm run build && node build/manage-users.js"
   },
-  "keywords": ["mcp", "notion", "server"],
+  "keywords": [
+    "mcp",
+    "notion",
+    "server"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
