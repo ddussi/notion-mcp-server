@@ -228,6 +228,13 @@ Claude Code나 Cursor에서:
 
 ## 🔒 보안
 
+### 기본 보안 기능
+
+- ✅ **환경 변수 검증**: `NOTION_API_KEY` 누락 시 서버 시작 불가
+- ✅ **Rate Limiting**: IP당 15분에 100 요청으로 제한 (DDoS 방지)
+- ✅ **CORS 설정**: 프로덕션에서 허용된 origin만 접근 가능 (`.env`에 `ALLOWED_ORIGINS` 설정)
+- ✅ **API 키 인증**: 모든 MCP 요청에 `x-api-key` 헤더 필수
+
 ### API 키 관리
 
 - ✅ API 키는 `users.json`에 저장됨 (절대 커밋하지 말 것!)
@@ -242,10 +249,19 @@ Claude Code나 Cursor에서:
 
 ### 프로덕션 배포 시
 
-1. **HTTPS 설정**: Nginx/Caddy로 리버스 프록시
-2. **방화벽**: 내부 네트워크에서만 접근 허용
-3. **Rate Limiting**: 요청 제한 추가
-4. **로깅**: 접근 로그 기록
+1. **환경 변수 설정**:
+
+   ```bash
+   ALLOWED_ORIGINS=https://yourdomain.com,https://api.yourdomain.com
+   ```
+
+2. **HTTPS 설정**: Nginx/Caddy로 리버스 프록시
+
+3. **방화벽**: 내부 네트워크에서만 접근 허용
+
+4. **Rate Limiting 조정**: 필요시 `src/index.ts`에서 제한값 변경
+
+5. **로깅**: 접근 로그 기록 (별도 구현 필요)
 
 ---
 
@@ -285,7 +301,9 @@ curl http://localhost:3000/health
 ## 📝 TODO
 
 - [ ] HTTPS 지원
-- [ ] Rate limiting
+- [x] Rate limiting
+- [x] 환경 변수 검증
+- [x] CORS 설정
 - [ ] 접근 로그 기록
 - [ ] 사용자 DB를 PostgreSQL로 마이그레이션
 - [ ] Web UI로 사용자 관리

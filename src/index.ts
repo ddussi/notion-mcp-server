@@ -1,18 +1,23 @@
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import rateLimit from "express-rate-limit";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-} from "@modelcontextprotocol/sdk/types.js";
+import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import { Client } from "@notionhq/client";
 
 dotenv.config();
+
+// Validate required environment variables
+if (!process.env.NOTION_API_KEY) {
+  console.error("❌ Error: NOTION_API_KEY is required in .env file");
+  console.error("Get your API key from: https://www.notion.so/my-integrations");
+  process.exit(1);
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -290,8 +295,24 @@ function createMCPServer() {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Rate limiting - Prevent abuse
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again later.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// CORS configuration - Restrict to specific origins in production
+const corsOptions = {
+  origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",") : "*", // Allow all origins in development
+  credentials: true,
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
+app.use(limiter);
 app.use(express.json());
 
 // Health check endpoint
