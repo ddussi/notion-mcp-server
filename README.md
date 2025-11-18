@@ -1,12 +1,12 @@
-# Company MCP Server (원격 서버)
+# Notion MCP Server
 
-회사 노션 워크스페이스와 연동되는 **원격 MCP(Model Context Protocol) 서버**입니다.
+노션 워크스페이스와 연동되는 **원격 MCP(Model Context Protocol) 서버**입니다.
 
 ## 특징
 
-- ✅ **원격 서버**: 중앙 서버에서 실행, 팀원들은 URL만 설정
+- ✅ **원격 서버**: 중앙 서버에서 실행, 사용자들은 URL만 설정
 - ✅ **API 키 인증**: 사용자별 API 키로 인증
-- ✅ **권한 관리**: 팀/사용자별 노션 페이지/DB 접근 제어
+- ✅ **권한 관리**: 사용자별 노션 페이지/DB 접근 제어
 - ✅ **Read-only**: 안전한 조회 전용 (생성/수정 없음)
 - ✅ **다중 클라이언트 지원**: Claude Code, Cursor, VSCode 등
 
@@ -21,7 +21,7 @@
 ```
 사용자 (Claude Code/Cursor/VSCode)
     ↓ (HTTP + SSE)
-중앙 MCP 서버 (회사 서버)
+MCP 서버
     ├── API 키 인증
     ├── 권한 검증
     └── Notion API 호출
@@ -35,7 +35,7 @@
 
 1. https://www.notion.so/my-integrations 접속
 2. "New integration" 클릭
-3. Integration 이름 입력 (예: "Company MCP Server")
+3. Integration 이름 입력 (예: "My MCP Server")
 4. Capabilities 선택:
    - ✅ Read content
    - ❌ Update content (사용 안 함)
@@ -84,11 +84,11 @@ docker-compose up -d
 또는:
 
 ```bash
-docker build -t company-mcp-server .
+docker build -t notion-mcp-server .
 docker run -d -p 3000:3000 \
   -e NOTION_API_KEY=your_key \
   --name mcp-server \
-  company-mcp-server
+  notion-mcp-server
 ```
 
 ### 5. 사용자 관리
@@ -100,6 +100,7 @@ npm run manage-users add "홍길동"
 ```
 
 출력:
+
 ```
 ✅ User created successfully!
 
@@ -145,10 +146,10 @@ npm run manage-users remove mcp_a1b2c3d4...
 ```json
 {
   "mcpServers": {
-    "company-notion": {
+    "notion-mcp": {
       "transport": {
         "type": "sse",
-        "url": "http://your-server.com:3000/mcp/sse",
+        "url": "http://localhost:3000/mcp/sse",
         "headers": {
           "x-api-key": "mcp_your_api_key_here"
         }
@@ -165,10 +166,10 @@ npm run manage-users remove mcp_a1b2c3d4...
 ```json
 {
   "mcpServers": {
-    "company-notion": {
+    "notion-mcp": {
       "transport": {
         "type": "sse",
-        "url": "http://your-server.com:3000/mcp/sse",
+        "url": "http://localhost:3000/mcp/sse",
         "headers": {
           "x-api-key": "mcp_your_api_key_here"
         }
@@ -186,10 +187,10 @@ npm run manage-users remove mcp_a1b2c3d4...
 {
   "mcpServers": [
     {
-      "name": "company-notion",
+      "name": "notion-mcp",
       "transport": {
         "type": "sse",
-        "url": "http://your-server.com:3000/mcp/sse",
+        "url": "http://localhost:3000/mcp/sse",
         "headers": {
           "x-api-key": "mcp_your_api_key_here"
         }
@@ -200,15 +201,16 @@ npm run manage-users remove mcp_a1b2c3d4...
 ```
 
 **주의:**
-- `http://your-server.com:3000`을 실제 서버 주소로 변경
-- `mcp_your_api_key_here`를 관리자에게 받은 API 키로 변경
+
+- `http://localhost:3000`을 실제 서버 주소로 변경 (원격 서버인 경우)
+- `mcp_your_api_key_here`를 발급받은 API 키로 변경
 - 설정 후 클라이언트 재시작 필요
 
 ---
 
 ## 📖 사용 예시
 
-Claude Code에서:
+Claude Code나 Cursor에서:
 
 ```
 노션에서 "프로젝트 가이드" 검색해줘
@@ -252,7 +254,7 @@ Claude Code에서:
 ### 디렉토리 구조
 
 ```
-company-mcp-server/
+notion-mcp-server/
 ├── src/
 │   ├── index.ts          # 메인 서버
 │   └── manage-users.ts   # 사용자 관리 CLI
